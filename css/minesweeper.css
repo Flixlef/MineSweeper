@@ -1,0 +1,68 @@
+#board {
+    margin: 0 auto;
+}
+
+.field {
+    height: 24px;
+    width: 24px;
+    border: 0.5px solid #AAA;
+    display: inline-block;
+    background-size: cover;
+    background-position: center center;
+}
+
+.row {
+    height: 24px;
+}
+
+.Zero {
+    background-image: url('../images/empty.png');
+}
+
+.Flagged {
+    background-image: url('../images/flagged.png');
+}
+
+.Exploding {
+    background-image: url('../images/exploding.png');
+}
+
+.Unknown {
+    background-image: url('../images/unknown.png');
+}
+
+.Mine {
+    background-image: url('../images/mine.png');
+}
+
+.One {
+    background-image: url('../images/one.png');
+}
+
+.Two {
+    background-image: url('../images/two.png');
+}
+
+.Three {
+    background-image: url('../images/three.png');
+}
+
+.Four {
+    background-image: url('../images/four.png');
+}
+
+.Five {
+    background-image: url('../images/five.png');
+}
+
+.Six {
+    background-image: url('../images/six.png');
+}
+
+.Seven {
+    background-image: url('../images/seven.png');
+}
+
+.Eight {
+    background-image: url('../images/eight.png');
+}
