@@ -2,6 +2,10 @@
 
 A simple clone of the Minesweeper game
 
+#TL;DR
+
+Goto dist and open the index.html with a modern browser of your choice
+
 ## Getting Started
 
 You need the [Node Package Manager](https://www.npmjs.com/) and [Typescript](https://www.typescriptlang.org/index.html#download-links) installed on your machine. 
