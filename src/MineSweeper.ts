@@ -4,12 +4,14 @@ class Startup {
 
         $(document).ready(function(){      
             $('#board').on('mousedown', '.field', function(e) {
+                $('#board').addClass('pushed');
                 if(e.which == 1 && !MineSweeper.has_game_finished()) {
                     document.getElementById('smiley').innerHTML = '😱';
                 }
             })
 
             $('#board').on('mouseup', '.field', function (e) {  
+                $('#board').removeClass('pushed');
                 if(MineSweeper.has_game_finished()) {
                     return;
                 }              
