@@ -3,14 +3,24 @@ class Startup {
         var MineSweeper = new Game(9, 9 , 30);
 
         $(document).ready(function(){      
-            $('#board').on('mouseup', '.field', function (e) {                
+            $('#board').on('mousedown', '.field', function(e) {
+                if(e.which == 1 && !MineSweeper.has_game_finished()) {
+                    document.getElementById('smiley').innerHTML = '😱';
+                }
+            })
+
+            $('#board').on('mouseup', '.field', function (e) {  
+                if(MineSweeper.has_game_finished()) {
+                    return;
+                }              
                 var x = $(this).data("x");
                 var y = $(this).data("y");
                 switch (e.which)
                 {
                     // Left Click.
                     case 1:
-                        MineSweeper.step_on_field(x, y);
+                        document.getElementById('smiley').innerHTML = '😀';
+                        MineSweeper.step_on_field(x, y);                        
                         MineSweeper.check_victory();
                     break;            
                     // Middle click.
@@ -18,10 +28,21 @@ class Startup {
                         MineSweeper.mark_field(x, y);
                     break;
                 }
-                var number_of_flags = MineSweeper.Board.count_flags();
-                document.getElementById('number-of-flags').innerHTML = number_of_flags.toString();                
+                var remaining_mines = MineSweeper.Board.remaining_mines();
+                document.getElementById('remaining-mines').innerHTML = Countdown.three_digets(remaining_mines);                
                 return true;
             });
+
+            $('#start-game').click(function() {
+                var mines = +$('#mines').val();
+                var width = +$('#width').val();
+                var height= +$('#height').val();
+
+                if(mines > 0 && width > 0 && height > 0) {
+                    MineSweeper.Countdown.stop();
+                    MineSweeper = new Game(width, height, mines);
+                }
+            })
         });        
     }
 }
@@ -29,26 +50,42 @@ class Startup {
 class Game {
     public Board : Board;
     public Countdown : Countdown;
-    constructor(sizeX : number, sizeY : number, mines : number) {
+    private game_ended : boolean;
+
+    constructor(sizeY : number, sizeX : number, mines : number) {
         this.Board = new Board(sizeX, sizeY, mines);
-        var boardWidth = sizeY * 22 + "px";
+        var boardWidth = sizeY * 20 + "px";
         this.Countdown = new Countdown();
-        this.Countdown.countdown("time", 0, 30);
+        this.Countdown.countdown();
         document.getElementById('board').style.width = boardWidth;
+        document.getElementById('remaining-mines').innerHTML = Countdown.three_digets(mines);
+        document.getElementById('smiley').innerHTML = "😀";
     }
 
     public step_on_field(x: number, y: number) : void {
         try {
             this.Board.step_on_field(x, y);
             if(this.check_victory()) {
-                console.log("SIEG!");
+                this.Countdown.stop();
+                this.lock_game();
+                document.getElementById('smiley').innerHTML = "😎";
             }            
         } catch(err) {
             this.Board.cheat();
             this.Board.fields[x][y].view = FieldView.Exploding;
             this.Board.printBoard();
-            console.log("Leider verloren, zahl deine Steuern!");
+            this.Countdown.stop();
+            this.lock_game();
+            document.getElementById('smiley').innerHTML = "😵";
         }
+    }
+
+    public lock_game() : void {
+        this.game_ended = true;
+    }
+
+    public has_game_finished() : boolean {
+        return this.game_ended;
     }
 
     public mark_field(x: number, y: number) : void {
@@ -77,36 +114,56 @@ class Game {
 }
 
 class Countdown {
+    public timeout_handle : any;
+    public break : any;
+
     constructor() {
 
     }
 
-    public countdown( elementName, minutes, seconds ) : void
+    public static three_digets( n ) : string
     {
-        var element, endTime, hours, mins, msLeft, time;
-    
-        function twoDigits( n )
-        {
-            return (n <= 9 ? "0" + n : n);
+        if(n <= 9) {
+            return "00" + n;
+        } else if (n <= 99) {
+            return "0" + n;
+        } else {
+            return n;
         }
+    }
+
+    public countdown() : void
+    {
+        var seconds = -1;
+        var element;
     
         function updateTimer()
         {
-            msLeft = endTime + (+new Date);
-            if ( msLeft < 1000 ) {
-                element.innerHTML = "countdown's over!";
-            } else {
-                time = new Date( msLeft );
-                hours = time.getUTCHours();
-                mins = time.getUTCMinutes();
-                element.innerHTML = (hours ? hours + ':' + twoDigits( mins ) : mins) + ':' + twoDigits( time.getUTCSeconds() );
-                setTimeout( updateTimer, time.getUTCMilliseconds() + 500 );
+            seconds++;
+            if ( seconds < 999 ) {
+                
+                setTimeout( updateTimer, 1000);
             }
+            element.innerHTML = (Countdown.three_digets(seconds));
         }
     
-        element = document.getElementById( elementName );
-        endTime = (+new Date) + 1000 * (60*minutes + seconds) + 500;
+        element = document.getElementById( "time" );
         updateTimer();
+    }
+
+    public stop() : void {
+        var highestTimeoutId = setTimeout(";");
+        for (var i = 0 ; i < highestTimeoutId ; i++) {
+            clearTimeout(i); 
+        }
+    }
+
+    public start() : void {
+        this.break = false;
+    }
+
+    public should_i_run() {
+        return this.break;
     }
 }
 
@@ -125,7 +182,7 @@ class Board {
         this.printBoard();
     }
 
-    public count_flags() {
+    public remaining_mines() {
         var flags = 0;
 
         for(var i = 0; i < this.sizeX; i++) {
@@ -136,7 +193,7 @@ class Board {
             }
         }
         
-        return flags;        
+        return ((this.number_of_bombs - flags > 0) ? this.number_of_bombs - flags : 0);        
     }
 
     public cheat() : void {
@@ -279,7 +336,7 @@ class Board {
     private to_html() : string {
         var html = '';
         for(var i = 0; i < this.sizeX; i++) {
-            html += '<div class="row">';
+            html += '<div class="line">';
             for(var j = 0; j < this.sizeY; j++) {
                 html += this.fields[i][j].to_html(i, j);
             }

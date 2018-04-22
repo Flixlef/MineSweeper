@@ -1,5 +1,13 @@
 #board {
     margin: 0 auto;
+    clear: both;
+    margin-bottom: 25px;
+}
+
+#header {
+    width: 300px;
+    margin: 0 auto;
+    height: 50px;
 }
 
 .field {
@@ -11,7 +19,24 @@
     background-position: center center; 
 }
 
-.row {
+.box {
+    display: inline-block;
+}
+
+.black-box {
+    color: red;
+    font-family: "Courier New";
+    padding: 3px;
+    font-size: 20pt;
+}
+
+#smiley {
+    width: 180px;
+    font-size: 20pt;
+    text-align: center;
+}
+
+.line {
     height: 20px;
 }
 

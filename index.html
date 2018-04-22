@@ -8,6 +8,7 @@
     <title>Bootstrap 101 Template</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/minesweeper.css">
+    <link rel="stylesheet" type="text/css" href="css/demo.css">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -18,13 +19,43 @@
   </head>
   <body>
     <div class="container">
-
+      <header>
+        <h1>MineSweeper</h1>
+      </header>
     </div>
-    <div class="container-fluid">
-      <div id="time"></div>
+    <div class="container-fluid">      
+      <div id="minesweeper">
+        <div id="header">
+            <div id="remaining-mines" class="box black-box" ></div>
+            <div id="smiley" class="box"></div>
+            <div id="time" class="box black-box"></div>
+        </div>
+      </div>
       <div id="board"></div>
-      <div id="number-of-flags" style="font-size: 38pt; color: pink;">0</div>
+      <div id="footer" class="text-center">
+        <form class="form-inline">
+            <div class="form-group">
+              <label for="width">Width</label>
+              <input type="number" class="form-control" id="width" placeholder="15" min="1" max="99" style="width: 5em">
+            </div>
+            <div class="form-group">
+                <label for="height">Height</label>
+                <input type="number" class="form-control" id="height" placeholder="10" min="1" max="99" style="width: 5em">
+            </div>            
+            <div class="form-group">
+                <label for="mines">Mines</label>
+                <input type="number" class="form-control" id="mines" placeholder="30" min="1" max="9000" style="width: 6em">
+            </div>     
+            <div id="start-game" class="btn btn-default">Start Game</div>
+        </form>
+      </div>
     </div>
+    <div class="container">
+      <footer>
+        <a class="pull-right" title="Github Link" href="https://github.com/Flixlef/MineSweeper" target="_blank"><img src="images/github.png" title="Octocat"></a>
+      </footer>
+    </div>
+
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
