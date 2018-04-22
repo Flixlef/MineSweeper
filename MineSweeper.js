@@ -2,7 +2,7 @@ var Startup = /** @class */ (function () {
     function Startup() {
     }
     Startup.main = function () {
-        var MineSweeper = new Game();
+        var MineSweeper = new Game(9, 9, 30);
         $(document).ready(function () {
             $('#board').on('mouseup', '.field', function (e) {
                 var x = $(this).data("x");
@@ -27,10 +27,12 @@ var Startup = /** @class */ (function () {
     return Startup;
 }());
 var Game = /** @class */ (function () {
-    function Game() {
-        this.Board = new Board(16, 30, 99);
+    function Game(sizeX, sizeY, mines) {
+        this.Board = new Board(sizeX, sizeY, mines);
+        var boardWidth = sizeY * 22 + "px";
         this.Countdown = new Countdown();
         this.Countdown.countdown("time", 0, 30);
+        document.getElementById('board').style.width = boardWidth;
     }
     Game.prototype.step_on_field = function (x, y) {
         try {

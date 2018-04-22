@@ -1,8 +1,8 @@
 class Startup {
     public static main(): any {
-        var MineSweeper = new Game();
+        var MineSweeper = new Game(9, 9 , 30);
 
-        $(document).ready(function(){
+        $(document).ready(function(){      
             $('#board').on('mouseup', '.field', function (e) {                
                 var x = $(this).data("x");
                 var y = $(this).data("y");
@@ -29,10 +29,12 @@ class Startup {
 class Game {
     public Board : Board;
     public Countdown : Countdown;
-    constructor() {
-        this.Board = new Board(16, 30, 99);
+    constructor(sizeX : number, sizeY : number, mines : number) {
+        this.Board = new Board(sizeX, sizeY, mines);
+        var boardWidth = sizeY * 22 + "px";
         this.Countdown = new Countdown();
         this.Countdown.countdown("time", 0, 30);
+        document.getElementById('board').style.width = boardWidth;
     }
 
     public step_on_field(x: number, y: number) : void {
