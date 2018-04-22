@@ -349,4 +349,3 @@ var FieldView;
     FieldView[FieldView["Mine"] = 12] = "Mine";
 })(FieldView || (FieldView = {}));
 Startup.main();
-//# sourceMappingURL=MineSweeper.js.map
