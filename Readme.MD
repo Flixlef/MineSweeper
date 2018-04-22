@@ -2,7 +2,7 @@
 
 A simple clone of the Minesweeper game
 
-#TL;DR
+# TL;DR
 
 Goto dist and open the index.html with a modern browser of your choice
 
