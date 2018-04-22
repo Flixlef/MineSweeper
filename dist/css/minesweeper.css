@@ -17,6 +17,7 @@
     display: inline-block;
     background-size: cover;
     background-position: center center; 
+    cursor: pointer;
 }
 
 .box {
@@ -55,6 +56,10 @@
 
 .Unknown {
     background-image: url('../images/unknown.png');
+}
+
+.pushed .Unknown:hover {
+    background-image: url('../images/pushed.png');
 }
 
 .Mine {

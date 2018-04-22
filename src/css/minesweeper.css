@@ -97,3 +97,7 @@
 .Eight {
     background-image: url('../images/eight.png');
 }
+
+#footer {
+    margin-bottom: 50px;
+}
