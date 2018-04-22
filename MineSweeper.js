@@ -2,7 +2,7 @@ var Startup = /** @class */ (function () {
     function Startup() {
     }
     Startup.main = function () {
-        var MineSweeper = new Game(9, 9, 30);
+        var MineSweeper = new Game(15, 10, 30);
         $(document).ready(function () {
             $('#board').on('mousedown', '.field', function (e) {
                 if (e.which == 1 && !MineSweeper.has_game_finished()) {

@@ -1,6 +1,6 @@
 class Startup {
     public static main(): any {
-        var MineSweeper = new Game(9, 9 , 30);
+        var MineSweeper = new Game(15, 10 , 30);
 
         $(document).ready(function(){      
             $('#board').on('mousedown', '.field', function(e) {
