@@ -22,7 +22,6 @@ var Startup = /** @class */ (function () {
                     case 1:
                         document.getElementById("smiley").innerHTML = "😀";
                         MineSweeper.step_on_field(x, y);
-                        MineSweeper.check_victory();
                         break;
                     // middle click.
                     case 2:

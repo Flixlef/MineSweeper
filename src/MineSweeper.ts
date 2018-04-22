@@ -22,7 +22,6 @@ class Startup {
                     case 1:
                         document.getElementById("smiley").innerHTML = "😀";
                         MineSweeper.step_on_field(x, y);
-                        MineSweeper.check_victory();
                     break;
                     // middle click.
                     case 2:
@@ -106,7 +105,7 @@ class Game {
         this.Countdown.stop();
     }
 
-    public check_victory(): boolean {
+    private check_victory(): boolean {
         var visited_fields : number = 0;
         var everything_visited : boolean = false;
         var number_of_fields : number = this.Board.sizeY * this.Board.sizeX;
