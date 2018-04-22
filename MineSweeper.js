@@ -32,13 +32,16 @@ var Startup = /** @class */ (function () {
                 return true;
             });
             $('#start-game').click(function () {
-                var mines = +$('#mines').val();
-                var width = +$('#width').val();
-                var height = +$('#height').val();
+                var width = +$('#width').val() > 99 ? 99 : +$('#width').val();
+                var height = +$('#height').val() > 99 ? 99 : +$('#height').val();
+                var mines = +$('#mines').val() > width * height ? Math.floor(Math.random() * (width * height - 1)) : +$('#mines').val();
                 if (mines > 0 && width > 0 && height > 0) {
                     MineSweeper.Countdown.stop();
                     MineSweeper = new Game(width, height, mines);
                 }
+            });
+            $('#smiley').click(function () {
+                $('#start-game').click();
             });
         });
     };
