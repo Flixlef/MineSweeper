@@ -4,46 +4,48 @@ var Startup = /** @class */ (function () {
     Startup.main = function () {
         var MineSweeper = new Game(15, 10, 30);
         $(document).ready(function () {
-            $('#board').on('mousedown', '.field', function (e) {
-                $('#board').addClass('pushed');
-                if (e.which == 1 && !MineSweeper.has_game_finished()) {
-                    document.getElementById('smiley').innerHTML = '😱';
+            $("#board").on("mousedown", ".field", function (e) {
+                $("#board").addClass("pushed");
+                if (e.which === 1 && !MineSweeper.has_game_finished()) {
+                    document.getElementById("smiley").innerHTML = "😱";
                 }
             });
-            $('#board').on('mouseup', '.field', function (e) {
-                $('#board').removeClass('pushed');
+            $("#board").on("mouseup", ".field", function (e) {
+                $("#board").removeClass("pushed");
                 if (MineSweeper.has_game_finished()) {
                     return;
                 }
                 var x = $(this).data("x");
                 var y = $(this).data("y");
                 switch (e.which) {
-                    // Left Click.
+                    // left Click.
                     case 1:
-                        document.getElementById('smiley').innerHTML = '😀';
+                        document.getElementById("smiley").innerHTML = "😀";
                         MineSweeper.step_on_field(x, y);
                         MineSweeper.check_victory();
                         break;
-                    // Middle click.
+                    // middle click.
                     case 2:
                         MineSweeper.mark_field(x, y);
                         break;
                 }
-                var remaining_mines = MineSweeper.Board.remaining_mines();
-                document.getElementById('remaining-mines').innerHTML = Countdown.three_digets(remaining_mines);
-                return true;
+                var remaining_mines = MineSweeper.remaining_mines();
+                document.getElementById("remaining-mines").innerHTML = Helper.three_digets(remaining_mines);
+                return;
             });
-            $('#start-game').click(function () {
-                var width = +$('#width').val() > 99 ? 99 : +$('#width').val();
-                var height = +$('#height').val() > 99 ? 99 : +$('#height').val();
-                var mines = +$('#mines').val() > width * height ? Math.floor(Math.random() * (width * height - 1)) : +$('#mines').val();
+            $("#start-game").click(function () {
+                var width = +$("#width").val() > 99 ? 99 : +$("#width").val();
+                var height = +$("#height").val() > 99 ? 99 : +$("#height").val();
+                var mines = +$("#mines").val() > width * height
+                    ? Math.floor(Math.random() * (width * height - 1))
+                    : +$("#mines").val();
                 if (mines > 0 && width > 0 && height > 0) {
-                    MineSweeper.Countdown.stop();
+                    MineSweeper.stop_game();
                     MineSweeper = new Game(width, height, mines);
                 }
             });
-            $('#smiley').click(function () {
-                $('#start-game').click();
+            $("#smiley").click(function () {
+                $("#start-game").click();
             });
         });
     };
@@ -55,26 +57,24 @@ var Game = /** @class */ (function () {
         var boardWidth = sizeY * 20 + "px";
         this.Countdown = new Countdown();
         this.Countdown.countdown();
-        document.getElementById('board').style.width = boardWidth;
-        document.getElementById('remaining-mines').innerHTML = Countdown.three_digets(mines);
-        document.getElementById('smiley').innerHTML = "😀";
+        document.getElementById("board").style.width = boardWidth;
+        document.getElementById("remaining-mines").innerHTML = Helper.three_digets(mines);
+        document.getElementById("smiley").innerHTML = "😀";
     }
     Game.prototype.step_on_field = function (x, y) {
         try {
             this.Board.step_on_field(x, y);
             if (this.check_victory()) {
-                this.Countdown.stop();
-                this.lock_game();
-                document.getElementById('smiley').innerHTML = "😎";
+                this.stop_game();
+                document.getElementById("smiley").innerHTML = "😎";
             }
         }
         catch (err) {
             this.Board.cheat();
             this.Board.fields[x][y].view = FieldView.Exploding;
             this.Board.printBoard();
-            this.Countdown.stop();
-            this.lock_game();
-            document.getElementById('smiley').innerHTML = "😵";
+            this.stop_game();
+            document.getElementById("smiley").innerHTML = "😵";
         }
     };
     Game.prototype.lock_game = function () {
@@ -86,10 +86,17 @@ var Game = /** @class */ (function () {
     Game.prototype.mark_field = function (x, y) {
         this.Board.markField(x, y);
     };
+    Game.prototype.remaining_mines = function () {
+        return this.Board.remaining_mines();
+    };
+    Game.prototype.stop_game = function () {
+        this.lock_game();
+        this.Countdown.stop();
+    };
     Game.prototype.check_victory = function () {
         var visited_fields = 0;
         var everything_visited = false;
-        var fields = this.Board.sizeY * this.Board.sizeX;
+        var number_of_fields = this.Board.sizeY * this.Board.sizeX;
         for (var i = 0; i < this.Board.sizeX; i++) {
             for (var j = 0; j < this.Board.sizeY; j++) {
                 if (this.Board.fields[i][j].visited) {
@@ -97,7 +104,7 @@ var Game = /** @class */ (function () {
                 }
             }
         }
-        if (fields - visited_fields == this.Board.number_of_bombs) {
+        if (number_of_fields - visited_fields === this.Board.number_of_bombs) {
             everything_visited = true;
         }
         return everything_visited;
@@ -107,17 +114,6 @@ var Game = /** @class */ (function () {
 var Countdown = /** @class */ (function () {
     function Countdown() {
     }
-    Countdown.three_digets = function (n) {
-        if (n <= 9) {
-            return "00" + n;
-        }
-        else if (n <= 99) {
-            return "0" + n;
-        }
-        else {
-            return n;
-        }
-    };
     Countdown.prototype.countdown = function () {
         var seconds = -1;
         var element;
@@ -126,7 +122,7 @@ var Countdown = /** @class */ (function () {
             if (seconds < 999) {
                 setTimeout(updateTimer, 1000);
             }
-            element.innerHTML = (Countdown.three_digets(seconds));
+            element.innerHTML = (Helper.three_digets(seconds));
         }
         element = document.getElementById("time");
         updateTimer();
@@ -136,12 +132,6 @@ var Countdown = /** @class */ (function () {
         for (var i = 0; i < highestTimeoutId; i++) {
             clearTimeout(i);
         }
-    };
-    Countdown.prototype.start = function () {
-        this.break = false;
-    };
-    Countdown.prototype.should_i_run = function () {
-        return this.break;
     };
     return Countdown;
 }());
@@ -158,7 +148,7 @@ var Board = /** @class */ (function () {
         var flags = 0;
         for (var i = 0; i < this.sizeX; i++) {
             for (var j = 0; j < this.sizeY; j++) {
-                if (this.fields[i][j].view == FieldView.Flagged) {
+                if (this.fields[i][j].view === FieldView.Flagged) {
                     flags++;
                 }
             }
@@ -168,7 +158,7 @@ var Board = /** @class */ (function () {
     Board.prototype.cheat = function () {
         for (var i = 0; i < this.sizeX; i++) {
             for (var j = 0; j < this.sizeY; j++) {
-                if (this.fields[i][j].type == FieldType.Mine) {
+                if (this.fields[i][j].type === FieldType.Mine) {
                     this.fields[i][j].view = FieldView.Mine;
                 }
                 else {
@@ -183,10 +173,10 @@ var Board = /** @class */ (function () {
         this.printBoard();
     };
     Board.prototype.step_on_field = function (x, y) {
-        if (this.fields[x][y].view == FieldView.Flagged) {
+        if (this.fields[x][y].view === FieldView.Flagged) {
             return;
         }
-        if (this.fields[x][y].type == FieldType.Mine) {
+        if (this.fields[x][y].type === FieldType.Mine) {
             this.fields[x][y].view = FieldView.Exploding;
             throw 1;
         }
@@ -230,7 +220,7 @@ var Board = /** @class */ (function () {
         }
         this.fields[x][y].view = field_view;
         this.fields[x][y].visited = true;
-        if (neighbor_mines == 0) {
+        if (neighbor_mines === 0) {
             this.step_on_neighbours(x, y);
         }
         return field_view;
@@ -242,7 +232,7 @@ var Board = /** @class */ (function () {
         for (var x = Math.max(0, i - 1); x <= Math.min(i + 1, rowLimit); x++) {
             for (var y = Math.max(0, j - 1); y <= Math.min(j + 1, columnLimit); y++) {
                 if (x !== i || y !== j) {
-                    if (this.fields[x][y].type == FieldType.Mine) {
+                    if (this.fields[x][y].type === FieldType.Mine) {
                         neighbor_mines++;
                     }
                 }
@@ -256,7 +246,7 @@ var Board = /** @class */ (function () {
         for (var x = Math.max(0, i - 1); x <= Math.min(i + 1, rowLimit); x++) {
             for (var y = Math.max(0, j - 1); y <= Math.min(j + 1, columnLimit); y++) {
                 if (x !== i || y !== j) {
-                    if (this.fields[x][y].view == FieldView.Unknown) {
+                    if (this.fields[x][y].view === FieldView.Unknown) {
                         this.calculate_field_view(x, y);
                     }
                 }
@@ -277,7 +267,7 @@ var Board = /** @class */ (function () {
         while (bombsPlaced < this.number_of_bombs) {
             var randX = Math.floor((Math.random() * this.sizeX));
             var randY = Math.floor((Math.random() * this.sizeY));
-            if (this.fields[randX][randY].type == FieldType.Empty) {
+            if (this.fields[randX][randY].type === FieldType.Empty) {
                 this.fields[randX][randY].type = FieldType.Mine;
                 bombsPlaced++;
             }
@@ -285,16 +275,16 @@ var Board = /** @class */ (function () {
     };
     Board.prototype.printBoard = function () {
         var html = this.to_html();
-        document.getElementById('board').innerHTML = html;
+        document.getElementById("board").innerHTML = html;
     };
     Board.prototype.to_html = function () {
-        var html = '';
+        var html = "";
         for (var i = 0; i < this.sizeX; i++) {
-            html += '<div class="line">';
+            html += "<div class='line'>";
             for (var j = 0; j < this.sizeY; j++) {
                 html += this.fields[i][j].to_html(i, j);
             }
-            html += '</div>';
+            html += "</div>";
         }
         return html;
     };
@@ -317,10 +307,26 @@ var Field = /** @class */ (function () {
         }
     };
     Field.prototype.to_html = function (x, y) {
-        var html = '<div class="field ' + FieldView[this.view] + '" data-x="' + x + '" data-y="' + y + '"></div>';
+        var html = "<div class='field " + FieldView[this.view] + "' data-x='" + x + "' data-y='" + y + "'></div>";
         return html;
     };
     return Field;
+}());
+var Helper = /** @class */ (function () {
+    function Helper() {
+    }
+    Helper.three_digets = function (n) {
+        if (n <= 9) {
+            return "00" + n;
+        }
+        else if (n <= 99) {
+            return "0" + n;
+        }
+        else {
+            return n.toString();
+        }
+    };
+    return Helper;
 }());
 var FieldType;
 (function (FieldType) {
