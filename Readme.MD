@@ -4,7 +4,7 @@ A simple clone of the Minesweeper game
 
 ## TL;DR
 
-[Play online](https://flixlef.github.io/) Goto dist and open the index.html with a modern browser of your choice
+[Play online](https://flixlef.github.io/) or goto dist and open the index.html with a modern browser of your choice
 
 ## Getting Started
 
